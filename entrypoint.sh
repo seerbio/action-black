@@ -39,6 +39,22 @@ if [[ "${INPUT_REPORTER}" = 'github-pr-review' ]]; then
     -level="${INPUT_LEVEL}" \
     -fail-on-error="${INPUT_FAIL_ON_ERROR}" \
     ${INPUT_REVIEWDOG_FLAGS} || reviewdog_exit_val="$?"
+elif [[ "${INPUT_REPORTER}" = 'github-pr-check' ]]; then
+  echo "[action-black] Checking python code with the black formatter and reviewdog..."
+  # shellcheck disable=SC2086
+  black_check_output="$(black --diff --quiet --check . ${INPUT_BLACK_ARGS})" ||
+    black_exit_val="$?"
+
+  # Input black formatter output to reviewdog
+  # shellcheck disable=SC2086
+  echo "${black_check_output}" | /tmp/reviewdog -f="diff" \
+    -f.diff.strip=0 \
+    -name="${INPUT_TOOL_NAME}" \
+    -reporter="github-pr-check" \
+    -filter-mode="diff_context" \
+    -level="${INPUT_LEVEL}" \
+    -fail-on-error="${INPUT_FAIL_ON_ERROR}" \
+    ${INPUT_REVIEWDOG_FLAGS} || reviewdog_exit_val="$?"
 else
 
   echo "[action-black] Checking python code with the black formatter and reviewdog..."
