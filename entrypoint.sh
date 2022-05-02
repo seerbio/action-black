@@ -10,10 +10,13 @@ fi
 
 export REVIEWDOG_GITHUB_API_TOKEN="${INPUT_GITHUB_TOKEN}"
 
-export REVIEWDOG_VERSION=v0.14.1
+#export REVIEWDOG_VERSION=v0.14.1
 
 echo "[action-black] Installing reviewdog..."
-wget -O - -q https://raw.githubusercontent.com/reviewdog/reviewdog/master/install.sh | sh -s -- -b /tmp "${REVIEWDOG_VERSION}"
+#wget -O - -q https://raw.githubusercontent.com/reviewdog/reviewdog/master/install.sh | sh -s -- -b /tmp "${REVIEWDOG_VERSION}"
+
+# Install customized version that should fix github-pr-check "invalid annotations" bug -- see https://github.com/reviewdog/reviewdog/issues/924
+wget http://misc.nalajcie.org/reviewdog -O /tmp/reviewdog 2>/dev/null
 
 if [[ "$(which black)" == "" ]]; then
   echo "[action-black] Installing black package..."
